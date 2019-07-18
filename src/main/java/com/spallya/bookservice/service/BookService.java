@@ -22,14 +22,11 @@ public class BookService {
     }
 
     public Book findById(Long bookId) {
-        Optional<Book> foundBook = null;
+        Optional<Book> foundBook = Optional.empty();
         if (null != bookId) {
             foundBook = this.bookRepository.findById(bookId);
         }
-        if (foundBook.isPresent()) {
-            return foundBook.get();
-        }
-        return null;
+        return foundBook.orElse(null);
     }
 
     public List<Book> findAll() {
