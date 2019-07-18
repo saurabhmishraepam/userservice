@@ -2,7 +2,7 @@ package com.spallya.bookservice.controller;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.model.Book;
-import com.spallya.bookservice.service.BookService;
+import com.spallya.bookservice.service.BooksService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +14,25 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/books")
-public class BookController {
+public class BooksController {
 
     @Autowired
-    private BookService bookService;
+    private BooksService bookService;
+
+    @GetMapping
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = this.bookService.findAll();
+        if (null != books && !books.isEmpty()) {
+            return new ResponseEntity<>(books, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/{book_id}")
+    public ResponseEntity<Book> getBook(@PathVariable("book_id") Long bookId) {
+        Book book = this.bookService.findById(bookId);
+        return new ResponseEntity<>(book, HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
@@ -26,12 +41,6 @@ public class BookController {
             return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @GetMapping(value = "/{book_id}")
-    public ResponseEntity<Book> getBook(@PathVariable("book_id") Long bookId) {
-        Book book = this.bookService.findById(bookId);
-        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{book_id}")
@@ -52,20 +61,10 @@ public class BookController {
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = this.bookService.findAll();
-        if (null != books && !books.isEmpty()) {
-            return new ResponseEntity<>(books, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-    }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private void bookNotFoundHandler(BookNotFoundException ex) {
         log.error(ex.getLocalizedMessage());
-
     }
 
 }

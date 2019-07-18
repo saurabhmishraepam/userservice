@@ -2,24 +2,23 @@ package com.spallya.bookservice.service;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.model.Book;
-import com.spallya.bookservice.repository.BookRepository;
+import com.spallya.bookservice.repository.BooksRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class BookService {
+public class BooksService {
 
-    private final BookRepository bookRepository;
+    private final BooksRepository bookRepository;
 
     public Book save(Book book) {
-        if (null != book) {
-            this.bookRepository.save(book);
-        }
-        return book;
+        return this.bookRepository.save(book);
     }
 
     public Book findById(Long bookId) {
@@ -51,6 +50,10 @@ public class BookService {
     }
 
     public void deleteById(Long bookId) {
-        this.bookRepository.deleteById(bookId);
+        try {
+            this.bookRepository.deleteById(bookId);
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.spallya.bookservice.controller;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.model.Book;
-import com.spallya.bookservice.service.BookService;
+import com.spallya.bookservice.service.BooksService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +12,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(BookController.class)
-public class BookControllerTest {
+@WebMvcTest(BooksController.class)
+public class BooksControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private BookService bookService;
+    private BooksService bookService;
 
     @Test
     public void getBook_returnsBook() throws Exception {
@@ -44,5 +43,10 @@ public class BookControllerTest {
         given(bookService.findById(Long.valueOf(1))).willThrow(new BookNotFoundException());
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void addBook_addsBook() throws Exception {
+
     }
 }
