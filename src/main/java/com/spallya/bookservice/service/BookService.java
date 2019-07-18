@@ -1,5 +1,6 @@
 package com.spallya.bookservice.service;
 
+import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,23 @@ public class BookService {
         if (null != bookId) {
             foundBook = this.bookRepository.findById(bookId);
         }
-        return foundBook.orElse(null);
+        if (!foundBook.isPresent()) {
+            throw new BookNotFoundException("Book with id: " + bookId + " is not found in the system");
+        }
+        return foundBook.get();
+    }
+
+    public Book updateById(Long bookId, Book updatedBook) {
+        Optional<Book> foundBook = Optional.empty();
+        if (null != bookId) {
+            foundBook = this.bookRepository.findById(bookId);
+        }
+        if (foundBook.isPresent()) {
+            updatedBook.setId(foundBook.get().getId());
+            this.bookRepository.save(updatedBook);
+            return updatedBook;
+        }
+        return null;
     }
 
     public List<Book> findAll() {
