@@ -1,8 +1,8 @@
 package com.spallya.bookservice.controller;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
-import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
+import com.spallya.bookservice.util.TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,7 @@ public class BooksControllerTest {
 
     @Test
     public void getBook_returnsBook() throws Exception {
-        given(bookService.findById(Long.valueOf(1))).willReturn(Book.builder()
-                .author("Test").name("Test Book").price(20.00).genre("test").build());
+        given(bookService.findById(1L)).willReturn(TestUtil.getTestBook());
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value("Test Book"))
@@ -40,13 +39,13 @@ public class BooksControllerTest {
 
     @Test
     public void getBook_notFound() throws Exception {
-        given(bookService.findById(Long.valueOf(1))).willThrow(new BookNotFoundException());
+        given(bookService.findById(1L)).willThrow(new BookNotFoundException());
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void addBook_addsBook() throws Exception {
+    public void addBook_addsBook() {
 
     }
 }
