@@ -5,6 +5,9 @@ import com.spallya.bookservice.model.Book;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author Spallya Omar
+ */
 public class TestUtil {
 
     public static Book getTestBook() {
