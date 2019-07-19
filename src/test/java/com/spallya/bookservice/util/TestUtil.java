@@ -9,7 +9,7 @@ public class TestUtil {
 
     public static Book getTestBook() {
         return Book.builder()
-                .author("Test").name("Test Book").price(20.00)
+                .author("SpallyaTest").name("Test Book").price(20.00)
                 .description("test book").genre("test")
                 .build();
     }
