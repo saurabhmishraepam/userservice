@@ -1,8 +1,20 @@
 HELP.md
 /target/
 /bin/
+## Maven:
 !.mvn/wrapper/maven-wrapper.jar
-.mvn/wrapper/
+/.mvn/
+/mvnw
+/mvnw.bat
+mvnw
+mvnw.cmd
+/log/
+*.log*
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
 ### STS ###
 .apt_generated
 .classpath

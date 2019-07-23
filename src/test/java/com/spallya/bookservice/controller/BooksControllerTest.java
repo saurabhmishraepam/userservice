@@ -1,6 +1,7 @@
 package com.spallya.bookservice.controller;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
+import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
 import com.spallya.bookservice.util.TestUtil;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.spallya.bookservice.util.TestUtil.asJsonString;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +43,7 @@ public class BooksControllerTest {
     @Test
     public void getBook_returnsBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
-        given(bookService.findById(1L)).willReturn(testBook);
+        given(bookService.findById(1L)).willReturn(Optional.of(testBook));
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(testBook.getName()))
@@ -73,7 +75,7 @@ public class BooksControllerTest {
 
     @Test
     public void getAllBooks_noContent() throws Exception {
-        given(bookService.findAll()).willReturn(Collections.emptyList());
+        given(bookService.findAll()).willThrow(new NoBooksFoundException());
         mockMvc.perform(MockMvcRequestBuilders.get("/books"))
                 .andExpect(status().isNoContent());
     }
@@ -82,7 +84,7 @@ public class BooksControllerTest {
     public void addBook_addsBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
         testBook.setId(1L);
-        given(bookService.save(any(Book.class))).willReturn(testBook);
+        given(bookService.save(any(Book.class))).willReturn(Optional.of(testBook));
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/books")
                 .content(asJsonString(testBook))
@@ -100,7 +102,7 @@ public class BooksControllerTest {
     public void updateBook_updatesBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
         testBook.setId(1L);
-        given(bookService.updateById(anyLong(), any(Book.class))).willReturn(testBook);
+        given(bookService.updateById(anyLong(), any(Book.class))).willReturn(Optional.of(testBook));
         mockMvc.perform(MockMvcRequestBuilders
                 .put("/books/1")
                 .content(asJsonString(testBook))

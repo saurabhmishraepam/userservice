@@ -1,8 +1,8 @@
 package com.spallya.bookservice.controller;
 
-import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
+import com.spallya.bookservice.util.ControllersUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Spallya Omar
@@ -28,31 +29,28 @@ public class BooksController {
         if (null != books && !books.isEmpty()) {
             return new ResponseEntity<>(books, HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping(value = "/{book_id}")
     public ResponseEntity<Book> getBook(@PathVariable("book_id") Long bookId) {
-        Book book = this.bookService.findById(bookId);
-        return new ResponseEntity<>(book, HttpStatus.OK);
+        Optional<Book> book = this.bookService.findById(bookId);
+        return book.map(ControllersUtil::getOkResponseEntity)
+                   .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        Book savedBook = this.bookService.save(book);
-        if (savedBook != null) {
-            return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Book> savedBook = this.bookService.save(book);
+        return savedBook.map(ControllersUtil::getCreatedResponseEntity)
+                .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
     @PutMapping(value = "/{book_id}")
     public ResponseEntity<Book> updateBook(@PathVariable("book_id") Long bookId, @RequestBody Book book) {
-        Book updatedBook = this.bookService.updateById(bookId, book);
-        if (updatedBook != null) {
-            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional<Book> updatedBook = this.bookService.updateById(bookId, book);
+        return updatedBook.map(ControllersUtil::getOkResponseEntity)
+                .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
     @DeleteMapping(value = "/{book_id}")
@@ -62,12 +60,6 @@ public class BooksController {
             return HttpStatus.OK;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    private void bookNotFoundHandler(BookNotFoundException ex) {
-        log.error(ex.getLocalizedMessage());
     }
 
 }
