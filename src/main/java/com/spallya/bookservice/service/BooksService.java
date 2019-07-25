@@ -1,9 +1,11 @@
 package com.spallya.bookservice.service;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
+import com.spallya.bookservice.exception.InvalidBookDataException;
 import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.repository.BooksRepository;
+import com.spallya.bookservice.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class BooksService {
     private final BooksRepository bookRepository;
 
     public Optional<Book> save(Book book) {
+        if (!Utils.isUserDataValid(book)) {
+            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
+        }
         try {
             return Optional.of(this.bookRepository.save(book));
         } catch (Exception ex) {
@@ -42,6 +47,9 @@ public class BooksService {
     }
 
     public Optional<Book> updateById(Long bookId, Book updatedBook) {
+        if (!Utils.isUserDataValid(updatedBook)) {
+            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
+        }
         Optional<Book> foundBook = Optional.empty();
         try {
             if (null != bookId) {

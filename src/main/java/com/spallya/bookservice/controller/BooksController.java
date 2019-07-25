@@ -1,5 +1,6 @@
 package com.spallya.bookservice.controller;
 
+import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
 import com.spallya.bookservice.util.ControllersUtil;
@@ -28,8 +29,9 @@ public class BooksController {
         List<Book> books = this.bookService.findAll();
         if (null != books && !books.isEmpty()) {
             return new ResponseEntity<>(books, HttpStatus.OK);
+        } else {
+            throw new NoBooksFoundException();
         }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping(value = "/{book_id}")

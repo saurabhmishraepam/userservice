@@ -1,6 +1,8 @@
 package com.spallya.bookservice.controller.advice;
 
+import com.spallya.bookservice.dto.ErrorDto;
 import com.spallya.bookservice.exception.BookNotFoundException;
+import com.spallya.bookservice.exception.InvalidBookDataException;
 import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.util.ControllersUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,5 +33,11 @@ public class RestExceptionHandler {
             NoBooksFoundException ex) {
         log.error(ex.getLocalizedMessage());
         return ControllersUtil.getNoContentResponseEntity();
+    }
+
+    @ExceptionHandler(InvalidBookDataException.class)
+    protected ResponseEntity<ErrorDto> invalidUserDataHandler(InvalidBookDataException ex) {
+        log.error(ex.getLocalizedMessage());
+        return ControllersUtil.getInternalServerErrorResponseEntity(ex);
     }
 }
