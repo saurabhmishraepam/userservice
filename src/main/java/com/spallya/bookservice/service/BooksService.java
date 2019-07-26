@@ -8,6 +8,7 @@ import com.spallya.bookservice.repository.BooksRepository;
 import com.spallya.bookservice.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Class containing business logic for the operations on Book Entity
+ *
  * @author Spallya Omar
  */
 @Slf4j
@@ -24,9 +27,18 @@ public class BooksService {
 
     private final BooksRepository bookRepository;
 
+    /**
+     * Business logic for saving a new book, before saving the book
+     * data is validated
+     *
+     * @param book {@link Book} model
+     * @return Optional of Added Book {@link Book}
+     * @throws InvalidBookDataException is thrown if book data is not valid
+     */
     public Optional<Book> save(Book book) {
         if (!Utils.isBookDataValid(book)) {
-            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
+            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, " +
+                    "Published Year and Price can not be empty");
         }
         try {
             return Optional.of(this.bookRepository.save(book));
@@ -36,6 +48,13 @@ public class BooksService {
         return Optional.empty();
     }
 
+    /**
+     * Business logic for finding an book using its ID
+     *
+     * @param bookId
+     * @return Optional of Found Book {@link Book}
+     * @throws BookNotFoundException is thrown if book is not found
+     */
     public Optional<Book> findById(Long bookId) {
         Optional<Book> foundBook = Optional.empty();
         try {
@@ -43,12 +62,22 @@ public class BooksService {
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
         }
-        return Optional.ofNullable(foundBook.orElseThrow(() -> new BookNotFoundException("Book with id: " + bookId + " is not found in the system")));
+        return Optional.ofNullable(foundBook.orElseThrow(() -> new BookNotFoundException("Book with id: "
+                + bookId + " is not found in the system")));
     }
 
+    /**
+     * Business logic for updating an existing book, before updation the
+     * book data is validated
+     *
+     * @param bookId and updatedBook {@link Book} model
+     * @return Optional of Updated Book {@link Book}
+     * @throws InvalidBookDataException is thrown if book data is not valid
+     */
     public Optional<Book> updateById(Long bookId, Book updatedBook) {
         if (!Utils.isBookDataValid(updatedBook)) {
-            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
+            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year " +
+                    "and Price can not be empty");
         }
         Optional<Book> foundBook = Optional.empty();
         try {
@@ -66,6 +95,12 @@ public class BooksService {
         return foundBook;
     }
 
+    /**
+     * Business logic for getting all the books present in the system
+     *
+     * @return List of Books {@link Book}
+     * @throws NoBooksFoundException is thrown if no books are present
+     */
     public List<Book> findAll() {
         List<Book> allBooks = Collections.emptyList();
         try {
@@ -76,9 +111,19 @@ public class BooksService {
         return Optional.ofNullable(allBooks).orElseThrow(NoBooksFoundException::new);
     }
 
+    /**
+     * Business logic for deleting an existing book
+     *
+     * @param bookId
+     * @throws BookNotFoundException is thrown if book is not found
+     */
     public void deleteById(Long bookId) {
         try {
             this.bookRepository.deleteById(bookId);
+        } catch (EmptyResultDataAccessException ex) {
+            log.error(ex.getLocalizedMessage());
+            throw new BookNotFoundException("Book with id: "
+                    + bookId + " is not found in the system");
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
         }

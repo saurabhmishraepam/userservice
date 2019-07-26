@@ -1,6 +1,8 @@
 package com.spallya.bookservice.exception;
 
 /**
+ * Exception thrown when there are no books found in the system
+ *
  * @author Spallya Omar
  */
 public class NoBooksFoundException extends RuntimeException {

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Class Containing all apis related to book operation
+ *
  * @author Spallya Omar
  */
 @Slf4j
@@ -29,6 +31,11 @@ public class BooksController {
     @Autowired
     private BooksService bookService;
 
+    /**
+     * Get all available books in the system
+     *
+     * @return List of Books {@link Book}
+     */
     @GetMapping
     @ApiOperation(value = "View list of available books", response = Iterable.class)
     @ApiResponses(value = {
@@ -45,6 +52,12 @@ public class BooksController {
         }
     }
 
+    /**
+     * Get an book from book id
+     *
+     * @param bookId
+     * @return Found Book {@link Book}
+     */
     @GetMapping(value = "/{book_id}")
     @ApiOperation(value = "Search an book with an ID", response = Book.class)
     @ApiResponses(value = {
@@ -58,6 +71,12 @@ public class BooksController {
                    .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
+    /**
+     * Add a new book
+     *
+     * @param book {@link Book} model
+     * @return Added Book {@link Book}
+     */
     @PostMapping
     @ApiOperation(value = "Add a new book", response = Book.class)
     @ApiResponses(value = {
@@ -71,6 +90,12 @@ public class BooksController {
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
+    /**
+     * Update an book using its book id
+     *
+     * @param bookId and updated book {@link Book} model
+     * @return Updated Book {@link Book}
+     */
     @PutMapping(value = "/{book_id}")
     @ApiOperation(value = "Update an book with an ID", response = Book.class)
     @ApiResponses(value = {
@@ -84,6 +109,12 @@ public class BooksController {
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
+    /**
+     * Delete an book using its book id
+     *
+     * @param bookId
+     * @return HttpStatus 200 on Successful Delete
+     */
     @DeleteMapping(value = "/{book_id}")
     @ApiOperation(value = "Delete an book with an ID", response = HttpStatus.class)
     @ApiResponses(value = {

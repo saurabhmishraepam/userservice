@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
+ * Book Model
+ *
  * @author Spallya Omar
  */
 @Data

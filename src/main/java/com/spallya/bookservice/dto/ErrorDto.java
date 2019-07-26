@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Class used for returning the error information when internal
+ * server error happens
+ *
  * @author Spallya Omar
  */
 @Data
