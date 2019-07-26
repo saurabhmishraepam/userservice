@@ -25,7 +25,7 @@ public class BooksService {
     private final BooksRepository bookRepository;
 
     public Optional<Book> save(Book book) {
-        if (!Utils.isUserDataValid(book)) {
+        if (!Utils.isBookDataValid(book)) {
             throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
         }
         try {
@@ -47,7 +47,7 @@ public class BooksService {
     }
 
     public Optional<Book> updateById(Long bookId, Book updatedBook) {
-        if (!Utils.isUserDataValid(updatedBook)) {
+        if (!Utils.isBookDataValid(updatedBook)) {
             throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year and Price can not be empty");
         }
         Optional<Book> foundBook = Optional.empty();

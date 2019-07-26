@@ -17,7 +17,7 @@ public class Utils {
                 .build();
     }
 
-    public static boolean isUserDataValid(Book book) {
+    public static boolean isBookDataValid(Book book) {
         boolean isValid = false;
         if (StringUtils.isNoneBlank(book.getName(), book.getAuthor(), book.getPublishedYear())
                 && book.getPrice() != null && book.getPrice() > 0) {

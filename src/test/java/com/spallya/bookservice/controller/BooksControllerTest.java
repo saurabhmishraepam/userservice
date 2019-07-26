@@ -1,6 +1,7 @@
 package com.spallya.bookservice.controller;
 
 import com.spallya.bookservice.exception.BookNotFoundException;
+import com.spallya.bookservice.exception.InvalidBookDataException;
 import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
@@ -41,7 +42,7 @@ public class BooksControllerTest {
     private BooksService bookService;
 
     @Test
-    public void getBook_returnsBook() throws Exception {
+    public void getBookReturnsBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
         given(bookService.findById(1L)).willReturn(Optional.of(testBook));
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
@@ -53,14 +54,14 @@ public class BooksControllerTest {
     }
 
     @Test
-    public void getBook_notFound() throws Exception {
+    public void getBookNotFound() throws Exception {
         given(bookService.findById(1L)).willThrow(new BookNotFoundException());
         mockMvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void getAllBooks_returnsAllBooks() throws Exception {
+    public void getAllBooksReturnsAllBooks() throws Exception {
         Book testBook = TestUtil.getTestBook();
         List<Book> books = new ArrayList<>();
         books.add(testBook);
@@ -74,14 +75,14 @@ public class BooksControllerTest {
     }
 
     @Test
-    public void getAllBooks_noContent() throws Exception {
+    public void getAllBooksNoContent() throws Exception {
         given(bookService.findAll()).willThrow(new NoBooksFoundException());
         mockMvc.perform(MockMvcRequestBuilders.get("/books"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    public void addBook_addsBook() throws Exception {
+    public void addBookAddsBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
         testBook.setId(1L);
         given(bookService.save(any(Book.class))).willReturn(Optional.of(testBook));
@@ -99,7 +100,20 @@ public class BooksControllerTest {
     }
 
     @Test
-    public void updateBook_updatesBook() throws Exception {
+    public void addBookInvalidBookData() throws Exception {
+        Book testBook = TestUtil.getTestBook();
+        given(bookService.save(any(Book.class))).willThrow(InvalidBookDataException.class);
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/books")
+                .content(asJsonString(testBook))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("exception").value(InvalidBookDataException.class.getSimpleName()));
+    }
+
+    @Test
+    public void updateBookUpdatesBook() throws Exception {
         Book testBook = TestUtil.getTestBook();
         testBook.setId(1L);
         given(bookService.updateById(anyLong(), any(Book.class))).willReturn(Optional.of(testBook));
@@ -114,5 +128,19 @@ public class BooksControllerTest {
                 .andExpect(jsonPath("author").value(testBook.getAuthor()))
                 .andExpect(jsonPath("genre").value(testBook.getGenre()))
                 .andExpect(jsonPath("price").value(testBook.getPrice()));
+    }
+
+    @Test
+    public void updateBookInvalidBookData() throws Exception {
+        Book testBook = TestUtil.getTestBook();
+        testBook.setId(1L);
+        given(bookService.updateById(anyLong(), any(Book.class))).willThrow(InvalidBookDataException.class);
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/books/1")
+                .content(asJsonString(testBook))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("exception").value(InvalidBookDataException.class.getSimpleName()));
     }
 }
