@@ -11,6 +11,9 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * @author Spallya Omar
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -23,8 +26,9 @@ public class SwaggerConfig {
                 .build()
                 .apiInfo(metaData());
     }
+
     private ApiInfo metaData() {
-        return  new ApiInfo(
+        return new ApiInfo(
                 "Book Service REST API",
                 "Spring Boot REST API for Book Service",
                 "1.0",
