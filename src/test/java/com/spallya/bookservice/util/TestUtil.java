@@ -13,7 +13,7 @@ public class TestUtil {
     public static Book getTestBook() {
         return Book.builder()
                 .author("SpallyaTest").name("Test Book").price(20.00)
-                .description("test book").genre("test")
+                .description("test book").genre("test").publishedYear("2011")
                 .build();
     }
 
@@ -22,6 +22,7 @@ public class TestUtil {
         assertThat(bookFromApp.getAuthor()).isEqualTo(testBook.getAuthor());
         assertThat(bookFromApp.getPrice()).isEqualTo(testBook.getPrice());
         assertThat(bookFromApp.getGenre()).isEqualTo(testBook.getGenre());
+        assertThat(bookFromApp.getPublishedYear()).isEqualTo(testBook.getPublishedYear());
         assertThat(bookFromApp.getDescription()).isEqualTo(testBook.getDescription());
     }
 
