@@ -8,6 +8,7 @@ import com.spallya.bookservice.util.ControllersUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -57,6 +58,18 @@ public class RestExceptionHandler {
      */
     @ExceptionHandler(InvalidBookDataException.class)
     protected ResponseEntity<ErrorDto> invalidBookDataHandler(InvalidBookDataException ex) {
+        log.error(ex.getLocalizedMessage());
+        return ControllersUtil.getInternalServerErrorResponseEntity(ex);
+    }
+
+    /**
+     * Handling Invalid Book Data Exception. This exception is thrown when there are
+     * required fields missing in Book Model
+     *
+     * @return ResponseEntity with Error DTO and status as 500
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ErrorDto> invalidBookDataHandler(MethodArgumentNotValidException ex) {
         log.error(ex.getLocalizedMessage());
         return ControllersUtil.getInternalServerErrorResponseEntity(ex);
     }

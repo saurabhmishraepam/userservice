@@ -36,10 +36,6 @@ public class BooksService {
      * @throws InvalidBookDataException is thrown if book data is not valid
      */
     public Optional<Book> save(Book book) {
-        if (!Utils.isBookDataValid(book)) {
-            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, " +
-                    "Published Year and Price can not be empty");
-        }
         try {
             return Optional.of(this.bookRepository.save(book));
         } catch (Exception ex) {
@@ -75,10 +71,6 @@ public class BooksService {
      * @throws InvalidBookDataException is thrown if book data is not valid
      */
     public Optional<Book> updateById(Long bookId, Book updatedBook) {
-        if (!Utils.isBookDataValid(updatedBook)) {
-            throw new InvalidBookDataException("Invalid Book data. Book Name, Author Name, Published Year " +
-                    "and Price can not be empty");
-        }
         Optional<Book> foundBook = Optional.empty();
         try {
             if (null != bookId) {

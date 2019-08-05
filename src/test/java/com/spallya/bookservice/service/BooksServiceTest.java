@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,30 +47,6 @@ public class BooksServiceTest {
             assertThat(savedBook.getId()).isEqualTo(testBook.getId());
             TestUtil.compareTwoBooksExcludingId(savedBook, testBook);
         }
-    }
-
-    @Test(expected = InvalidBookDataException.class)
-    public void saveShouldReturnInvalidBookDataWhenEmailIsEmpty() {
-        Book testBook = TestUtil.getTestBook();
-        testBook.setAuthor("");
-        this.booksService.save(testBook);
-    }
-
-    @Test(expected = InvalidBookDataException.class)
-    public void saveShouldReturnInvalidBookDataWhenNameIsEmpty() {
-        Book testBook = TestUtil.getTestBook();
-        testBook.setName("");
-        this.booksService.save(testBook);
-    }
-
-    @Test(expected = InvalidBookDataException.class)
-    public void saveShouldReturnInvalidBookDataWhenBothNameAndEmailIsEmpty() {
-        Book testBook = TestUtil.getTestBook();
-        testBook.setName("");
-        testBook.setAuthor("");
-        testBook.setPublishedYear("");
-        testBook.setPrice(0.0);
-        this.booksService.save(testBook);
     }
 
     @Test

@@ -4,16 +4,14 @@ import com.spallya.bookservice.exception.NoBooksFoundException;
 import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
 import com.spallya.bookservice.util.ControllersUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,10 +63,10 @@ public class BooksController {
             @ApiResponse(code = 404, message = "No book present in the database with the given ID")
     }
     )
-    public ResponseEntity<Book> getBook(@PathVariable("book_id") Long bookId) {
+    public ResponseEntity<Book> getBook(@ApiParam(value = "Book's ID that need to be fetched", required = true) @PathVariable("book_id") Long bookId) {
         Optional<Book> book = this.bookService.findById(bookId);
         return book.map(ControllersUtil::getOkResponseEntity)
-                   .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
+                .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
     /**
@@ -84,7 +82,7 @@ public class BooksController {
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
-    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+    public ResponseEntity<Book> addBook(@ApiParam(value = "Book model that need to be added", required = true) @Valid @RequestBody Book book) {
         Optional<Book> savedBook = this.bookService.save(book);
         return savedBook.map(ControllersUtil::getCreatedResponseEntity)
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
@@ -103,7 +101,8 @@ public class BooksController {
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
-    public ResponseEntity<Book> updateBook(@PathVariable("book_id") Long bookId, @RequestBody Book book) {
+    public ResponseEntity<Book> updateBook(@ApiParam(value = "Book's ID that need to be updated", required = true) @PathVariable("book_id") Long bookId,
+                                           @ApiParam(value = "Book model that need to be updated", required = true) @Valid @RequestBody Book book) {
         Optional<Book> updatedBook = this.bookService.updateById(bookId, book);
         return updatedBook.map(ControllersUtil::getOkResponseEntity)
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
@@ -122,7 +121,7 @@ public class BooksController {
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
-    public HttpStatus deleteBook(@PathVariable("book_id") Long bookId) {
+    public HttpStatus deleteBook(@ApiParam(value = "Book's ID that need to be deleted", required = true) @PathVariable("book_id") Long bookId) {
         if (null != bookId) {
             this.bookService.deleteById(bookId);
             return HttpStatus.OK;
