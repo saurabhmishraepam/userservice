@@ -1,7 +1,7 @@
 package com.spallya.bookservice.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spallya.bookservice.model.Book;
+import com.spallya.bookservice.dto.BookDTO;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,14 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TestUtil {
 
-    public static Book getTestBook() {
-        return Book.builder()
+    public static BookDTO getTestBook() {
+        return BookDTO.builder()
                 .author("SpallyaTest").name("Test Book").price(20.00)
                 .description("test book").genre("test").publishedYear("2011")
                 .build();
     }
 
-    public static void compareTwoBooksExcludingId(Book bookFromApp, Book testBook) {
+    public static void compareTwoBooksExcludingId(BookDTO bookFromApp, BookDTO testBook) {
         assertThat(bookFromApp.getName()).isEqualTo(testBook.getName());
         assertThat(bookFromApp.getAuthor()).isEqualTo(testBook.getAuthor());
         assertThat(bookFromApp.getPrice()).isEqualTo(testBook.getPrice());

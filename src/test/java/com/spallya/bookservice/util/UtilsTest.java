@@ -22,7 +22,7 @@ public class UtilsTest {
 
     @Test
     public void forValidBookDataIsValid() {
-        assertThat(Utils.isBookDataValid(TestUtil.getTestBook())).isEqualTo(true);
+        assertThat(Utils.isBookDataValid(Utils.convertToBookEntity(TestUtil.getTestBook()))).isEqualTo(true);
     }
 
     @Test

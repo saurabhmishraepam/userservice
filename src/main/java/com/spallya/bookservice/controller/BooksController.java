@@ -1,7 +1,8 @@
 package com.spallya.bookservice.controller;
 
+import com.spallya.bookservice.dto.BookDTO;
+import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.exception.NoBooksFoundException;
-import com.spallya.bookservice.model.Book;
 import com.spallya.bookservice.service.BooksService;
 import com.spallya.bookservice.util.ControllersUtil;
 import io.swagger.annotations.*;
@@ -32,19 +33,19 @@ public class BooksController {
     /**
      * Get all available books in the system
      *
-     * @return List of Books {@link Book}
+     * @return List of BookDTOs {@link BookDTO}
      */
-    @GetMapping
     @ApiOperation(value = "View list of available books", response = Iterable.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list"),
             @ApiResponse(code = 204, message = "No books present in the database")
     }
     )
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = this.bookService.findAll();
+    @GetMapping
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> books = this.bookService.findAll();
         if (null != books && !books.isEmpty()) {
-            return new ResponseEntity<>(books, HttpStatus.OK);
+            return ControllersUtil.getOkResponseEntity(books);
         } else {
             throw new NoBooksFoundException();
         }
@@ -54,57 +55,57 @@ public class BooksController {
      * Get an book from book id
      *
      * @param bookId
-     * @return Found Book {@link Book}
+     * @return Found BookDTO {@link BookDTO}
      */
-    @GetMapping(value = "/{book_id}")
-    @ApiOperation(value = "Search an book with an ID", response = Book.class)
+    @ApiOperation(value = "Search an book with an ID", response = BookDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved book"),
             @ApiResponse(code = 404, message = "No book present in the database with the given ID")
     }
     )
-    public ResponseEntity<Book> getBook(@ApiParam(value = "Book's ID that need to be fetched", required = true) @PathVariable("book_id") Long bookId) {
-        Optional<Book> book = this.bookService.findById(bookId);
+    @GetMapping(value = "/{book_id}")
+    public ResponseEntity<BookDTO> getBook(@ApiParam(value = "Book's ID that need to be fetched", required = true) @PathVariable("book_id") Long bookId) {
+        Optional<BookDTO> book = this.bookService.findById(bookId);
         return book.map(ControllersUtil::getOkResponseEntity)
-                .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
+                .orElseThrow(BookNotFoundException::new);
     }
 
     /**
      * Add a new book
      *
-     * @param book {@link Book} model
-     * @return Added Book {@link Book}
+     * @param book {@link BookDTO} model
+     * @return Added BookDTO {@link BookDTO}
      */
-    @PostMapping
-    @ApiOperation(value = "Add a new book", response = Book.class)
+    @ApiOperation(value = "Add a new book", response = BookDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully added book"),
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
-    public ResponseEntity<Book> addBook(@ApiParam(value = "Book model that need to be added", required = true) @Valid @RequestBody Book book) {
-        Optional<Book> savedBook = this.bookService.save(book);
-        return savedBook.map(ControllersUtil::getCreatedResponseEntity)
+    @PostMapping
+    public ResponseEntity<BookDTO> addBook(@ApiParam(value = "Book model that needs to be added", required = true) @Valid @RequestBody BookDTO book) {
+        Optional<BookDTO> savedBookDTO = this.bookService.save(book);
+        return savedBookDTO.map(ControllersUtil::getCreatedResponseEntity)
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
     /**
      * Update an book using its book id
      *
-     * @param bookId and updated book {@link Book} model
-     * @return Updated Book {@link Book}
+     * @param bookId and updated book {@link BookDTO} model
+     * @return Updated BookDTO {@link BookDTO}
      */
-    @PutMapping(value = "/{book_id}")
-    @ApiOperation(value = "Update an book with an ID", response = Book.class)
+    @ApiOperation(value = "Update an book with an ID", response = BookDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated book"),
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
-    public ResponseEntity<Book> updateBook(@ApiParam(value = "Book's ID that need to be updated", required = true) @PathVariable("book_id") Long bookId,
-                                           @ApiParam(value = "Book model that need to be updated", required = true) @Valid @RequestBody Book book) {
-        Optional<Book> updatedBook = this.bookService.updateById(bookId, book);
-        return updatedBook.map(ControllersUtil::getOkResponseEntity)
+    @PutMapping(value = "/{book_id}")
+    public ResponseEntity<BookDTO> updateBook(@ApiParam(value = "Book's ID that need to be updated", required = true) @PathVariable("book_id") Long bookId,
+                                              @ApiParam(value = "Book model that needs to be updated", required = true) @Valid @RequestBody BookDTO book) {
+        Optional<BookDTO> updatedBookDTO = this.bookService.updateById(bookId, book);
+        return updatedBookDTO.map(ControllersUtil::getOkResponseEntity)
                 .orElseGet(ControllersUtil::getInternalServerErrorResponseEntity);
     }
 
@@ -114,13 +115,13 @@ public class BooksController {
      * @param bookId
      * @return HttpStatus 200 on Successful Delete
      */
-    @DeleteMapping(value = "/{book_id}")
     @ApiOperation(value = "Delete an book with an ID", response = HttpStatus.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted book"),
             @ApiResponse(code = 500, message = "Some error happened during the operation")
     }
     )
+    @DeleteMapping(value = "/{book_id}")
     public HttpStatus deleteBook(@ApiParam(value = "Book's ID that need to be deleted", required = true) @PathVariable("book_id") Long bookId) {
         if (null != bookId) {
             this.bookService.deleteById(bookId);
