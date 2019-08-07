@@ -1,5 +1,6 @@
 package com.spallya.bookservice.controller;
 
+import com.spallya.bookservice.constants.StringConstants;
 import com.spallya.bookservice.dto.BookDTO;
 import com.spallya.bookservice.exception.BookNotFoundException;
 import com.spallya.bookservice.exception.NoBooksFoundException;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping(value = "/books")
-@Api(description = "Operations pertaining to Books")
+@Api(tags = {StringConstants.BOOK_SWAGGER_TAG})
 public class BooksController {
 
     @Autowired
