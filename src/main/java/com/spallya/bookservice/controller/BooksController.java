@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,33 @@ public class BooksController {
     @GetMapping
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         List<BookDTO> books = this.bookService.findAll();
+        if (null != books && !books.isEmpty()) {
+            return ControllersUtil.getOkResponseEntity(books);
+        } else {
+            throw new NoBooksFoundException();
+        }
+    }
+
+    /**
+     * Get all books in the system from Book Ids
+     *
+     * @return List of BookDTOs {@link BookDTO}
+     */
+    @ApiOperation(value = "Get books from list of book IDs", response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 204, message = "No books present in the database")
+    }
+    )
+    @GetMapping(value = "/select/{book_ids}")
+    public ResponseEntity<List<BookDTO>> getAllBooksFromIds(@ApiParam(value = "Book IDs that need to be fetched", required = true) @PathVariable("book_ids") String[] bookIds ) {
+        List<Long> finalBookIds = new ArrayList<>();
+        if (bookIds != null) {
+            for (String bookId : bookIds) {
+                finalBookIds.add(Long.valueOf(bookId));
+            }
+        }
+        List<BookDTO> books = this.bookService.findByIdIn(finalBookIds);
         if (null != books && !books.isEmpty()) {
             return ControllersUtil.getOkResponseEntity(books);
         } else {

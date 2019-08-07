@@ -132,4 +132,17 @@ public class BooksService {
             log.error(ex.getLocalizedMessage());
         }
     }
+
+    public List<BookDTO> findByIdIn(List<Long> bookIds) {
+        List<Book> allBooks = Collections.emptyList();
+        try {
+            allBooks = this.booksRepository.findByIdIn(bookIds);
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
+        }
+        if (null == allBooks || allBooks.isEmpty()) {
+            throw new NoBooksFoundException("No books found in the database");
+        }
+        return allBooks.stream().map(Utils::mapBookEntityToDTO).collect(toList());
+    }
 }
