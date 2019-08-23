@@ -1,5 +1,6 @@
 package com.spallya.bookservice.util;
 
+import com.spallya.bookservice.dto.BookDTO;
 import com.spallya.bookservice.dto.ErrorDto;
 import com.spallya.bookservice.model.Book;
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +35,39 @@ public class Utils {
      * @param book {@link Book}
      * @return {@link ErrorDto}
      */
-    public static boolean isBookDataValid(Book book) {
+    static boolean isBookDataValid(Book book) {
         boolean isValid = false;
         if (StringUtils.isNoneBlank(book.getName(), book.getAuthor(), book.getPublishedYear())
                 && book.getPrice() != null && book.getPrice() > 0) {
             isValid = true;
         }
         return isValid;
+    }
+
+    public static BookDTO mapBookEntityToDTO(Book book) {
+        if (null == book) {
+            return null;
+        }
+        return BookDTO.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .genre(book.getGenre())
+                .price(book.getPrice())
+                .publishedYear(book.getPublishedYear())
+                .build();
+    }
+
+    public static Book convertToBookEntity(BookDTO bookDTO) {
+        return Book.builder()
+                .id(bookDTO.getId())
+                .name(bookDTO.getName())
+                .author(bookDTO.getAuthor())
+                .description(bookDTO.getDescription())
+                .genre(bookDTO.getGenre())
+                .price(bookDTO.getPrice())
+                .publishedYear(bookDTO.getPublishedYear())
+                .build();
     }
 }

@@ -3,11 +3,15 @@ package com.spallya.bookservice.repository;
 import com.spallya.bookservice.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  * Class containing Data Access Logic for Book Entity
  *
  * @author Spallya Omar
  */
 public interface BooksRepository extends JpaRepository<Book, Long> {
+
+    List<Book> findByIdIn(List<Long> ids);
 
 }
