@@ -1,0 +1,21 @@
+logging:
+    level:
+        liquibase: INFO
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8061/eureka/
+server:
+    port: 8000
+spring:
+    application:
+        name: book-service
+    datasource:
+        password: Epam123$$
+        url: jdbc:mysql://localhost:3306/book_service
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+    liquibase:
+        change-log: classpath:/db/changelog/changelog-master.xml
