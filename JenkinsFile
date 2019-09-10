@@ -32,5 +32,11 @@ pipeline {
             }
         }
 
+        stage('Copy Artifact to Deployment Location') {
+            steps {
+                bat("xcopy \"C:\\Program Files (x86)\\Jenkins\\workspace\\book-service-pipeline\\target\\book-service-0.0.1-SNAPSHOT.jar\" C:\\Deployment\\book-service")
+            }
+        }
+
     }
 }
