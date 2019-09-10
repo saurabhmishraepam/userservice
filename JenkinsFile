@@ -13,7 +13,7 @@ pipeline {
             }
         }
 
-         stage('Test Stage') {
+        stage('Test Stage') {
             steps {
 
                 withMaven(maven:'M3'){
@@ -23,12 +23,20 @@ pipeline {
             }
         }
 
-           stage('Deploy Stage') {
+        stage('Build Artifact Stage') {
             steps {
-
                 withMaven(maven:'M3'){
-                	echo 'Started Deploy Stage...'
-                	bat "mvn install"
+                echo 'Started Build Artifact Stage...'
+                bat "mvn install"
+                }
+            }
+        }
+
+        stage('Deploy Book Service') {
+            steps {
+                withMaven(maven:'M3'){
+                echo 'Started Deploy Stage...'
+                bat "mvn spring-boot:run"
                 }
             }
         }
