@@ -32,14 +32,5 @@ pipeline {
             }
         }
 
-        stage('Deploy Book Service') {
-            steps {
-                withMaven(maven:'M3'){
-                echo 'Started Deploy Stage...'
-                bat "mvn spring-boot:run"
-                }
-            }
-        }
-
     }
 }
