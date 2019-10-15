@@ -1,42 +1,21 @@
-pipeline {
-    agent any
-    stages {
+node {
         stage('Compile Stage') {
-            steps {
-
-                withMaven(maven:'M3'){
-                	echo 'Started Compile Stage...';
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                	bat "mvn clean"
-                }
-            }
+                	sh "mvn clean"
         }
-
         stage('Test Stage') {
-            steps {
-
-                withMaven(maven:'M3'){
-                	echo 'Started Test Stage...'
-                	bat "mvn test"
-                }
-            }
+                	sh "mvn test"
         }
-
         stage('Build Artifact Stage') {
-            steps {
-                withMaven(maven:'M3'){
-                echo 'Started Build Artifact Stage...'
-                bat "mvn install"
-                }
-            }
+                sh "mvn install -DskipTests"
         }
-
         stage('Copy Artifact to Deployment Location') {
-            steps {
-                bat("xcopy \"C:\\Program Files (x86)\\Jenkins\\workspace\\book-service-pipeline\\target\\book-service-0.0.1-SNAPSHOT.jar\" C:\\Deployment\\book-service")
+              sh 'cp -r target/* docker'
+            }
+        stage('build and push docker image') {
+            docker.withRegistry('https://index.docker.io/v1/', '41ef2345-2b6b-458e-a5e5-80701a9953c2') {
+                def customImage = docker.build("saurabhdockerepam/aa-space:firstbuild-${env.BUILD_ID}", "docker/")
+                /* Push the container to the custom Registry */
+                customImage.push()
             }
         }
-
-    }
 }
