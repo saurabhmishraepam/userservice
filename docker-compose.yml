@@ -3,4 +3,4 @@ services:
   demoapp:
     image: saurabhmishraatdocker/jpop-build
     ports:
-      - 8090:8080
+      - 8091:8080
