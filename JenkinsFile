@@ -1,4 +1,18 @@
+
 node {
+     def giturl= "https://github.com/saurabhmishraepam/userservice.git"
+     def dockerimage = "saurabhmishraatdocker/jpop-build:firstbuild-${env.BUILD_ID}"
+    stage("WorkSpace clear"){
+        cleanWs()
+    }
+    
+    stage("code checkout"){
+        
+    checkout([$class: 'GitSCM', branches: [[name: '*/master']], 
+ doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+ userRemoteConfigs: [[url: giturl]]])
+    }
+    
         stage('Compile Stage') {
                 	sh "mvn clean"
         }
@@ -9,13 +23,16 @@ node {
                 sh "mvn install -DskipTests"
         }
         stage('Copy Artifact to Deployment Location') {
-              sh 'cp -r target/* docker'
+              //sh 'cp -r target/* docker'
             }
         stage('build and push docker image') {
-            docker.withRegistry('https://index.docker.io/v1/', '41ef2345-2b6b-458e-a5e5-80701a9953c2') {
-                def customImage = docker.build("saurabhdockerepam/aa-space:firstbuild-${env.BUILD_ID}", "docker/")
+            docker.withRegistry('https://index.docker.io/v1/', 'docker') {
+                def customImage = docker.build(dockerimage)
                 /* Push the container to the custom Registry */
                 customImage.push()
             }
+        }
+        
+        stage(name :"deploy", concurrency:1 ){
         }
 }
