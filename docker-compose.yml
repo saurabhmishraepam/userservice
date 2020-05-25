@@ -1,6 +1,6 @@
 version : '3.7'
 services:
   demoapp:
-    image: saurabhmishraatdocker/jpop-build
+    image: saurabhmishraatdocker/youtubepipeline
     ports:
       - 8091:8080
